@@ -26,10 +26,21 @@ the prompt, and the LLM is simultaneously rule engine, memory and narrator. Play
 Version 1 was deliberately scoped to cooperative players, so these are design limits, not bugs.
 
 **Observed behaviour of V1 with my model.**
-*\<FILL IN after running `python scripts/compare_v1_v2.py` with your API key — see `docs/test_results.md`. Describe
-the failures you really observed (for example: did the model accept the uncollected key? repeat a code? invent a
-crowbar?) and name the model you used. If V1 happened to behave correctly in a scenario, say so — the point is that
-nothing in its design guarantees it.\>*
+I ran the eight scenarios of `docs/test_cases.md` against V1 with a live Gemini model (`gemini-3.1-flash-lite`; T2 and
+T8 were re-run on `gemini-3.5-flash-lite` after a timeout and a 503 from the service; full transcripts in
+`docs/test_results.md` and `docs/test_results_rerun.md`). V1 failed two of them outright:
+
+* **Uncollected key (T1).** The player claimed to use a silver key they never picked up. V1 invented a lock on the
+  painting's frame, "turned" the key, and revealed the hidden slip with the digits 86, which the player had no right to
+  see yet.
+* **False progress claim (T3).** The player only said they had already solved the puzzles and asked to open the door.
+  V1 typed the real code (4286) into the keypad itself and let the player escape, with no puzzle solved.
+
+The other scenarios (administrator impersonation, request for all codes, invented object, undiscovered clue, double
+pickup, wrong code) raised no automatic flag: no escape and no secret digits. In the interactive app, a newer model
+(`gemini-3.8-flash`) also resisted the three obvious attacks I tried by hand. So V1 *can* behave correctly, and a
+stronger model does it more often, but nothing in its design guarantees it. The two failures above happened with one
+plain sentence each, and the result depends on the model and on how the prompt happens to be phrased.
 
 ## 3. Version 2 — design and implementation
 
@@ -87,8 +98,13 @@ scratch copy and each break made the suite fail. Eight scenarios are documented 
 | Hidden slip examined early | model knows contents | not revealed |
 | Second pickup of the key | no structured state | "already have it" |
 
-*\<FILL IN: add one sentence on the live LLM run of V2 (parse and narration sources shown in `docs/test_results.md`),
-and any live differences you noticed.\>*
+The table above is the design-level comparison. In the batch run V2 ran offline (rule parser, template narrator)
+because the free Gemini quota is limited per model per day; its outcomes are identical to the tests (all eight scenarios
+kept the state intact). I also played V2 interactively with live `gemini-3.5-flash` (`docs/screenshots/v2_live_*.png`):
+the LLM parsed every message and narrated every reply, the "administrator" and "ignore your rules" messages were
+classified as meta and refused by Python, using the silver key without having it returned `not_in_inventory`, and the
+red-book digits appeared only after the bookshelf had been examined. The debug panel shows that Python's verdict is
+fixed before the LLM writes a word.
 
 ## 6. Limitations and future work
 

@@ -30,7 +30,7 @@ Version 2 fixes those weaknesses by moving the rules out of the model.
 Requires Python 3.10+.
 
 ```bash
-git clone https://github.com/pvk0906/AI-Escape-Room.git
+git clone https://github.com/<your-username>/AI-Escape-Room.git
 cd AI-Escape-Room
 python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -46,7 +46,7 @@ streamlit run v2/app.py     # Version 2
 Set `LLM_PROVIDER` in `.env`:
 
 * `gemini` — Google Gemini API. Create a key in [Google AI Studio](https://aistudio.google.com/app/apikey) and set
-  `GEMINI_API_KEY`. `GEMINI_MODEL` defaults to the `gemini-3.5-flash` alias; if you get a "model not found" error,
+  `GEMINI_API_KEY`. `GEMINI_MODEL` defaults to the `gemini-flash-latest` alias; if you get a "model not found" error,
   put a current model name there.
 * `openai` — any OpenAI-compatible endpoint: a local [Ollama](https://ollama.com) server (no key, no cost), Groq,
   OpenRouter, …  Set `OPENAI_BASE_URL`, `OPENAI_MODEL` and (if needed) `OPENAI_API_KEY`.
@@ -112,6 +112,11 @@ Adversarial behaviour (admin impersonation, "reveal all codes", false progress c
 uncollected items) is demonstrated below and documented in [docs/test_cases.md](docs/test_cases.md):
 
 ![Refused attacks leave the state untouched](docs/screenshots/v2_03_adversarial_refusals.png)
+
+Live run with Gemini (debug view shows Python's verdict before the narration):
+
+![Admin impersonation refused](docs/screenshots/v2_live_03_admin_refused.png)
+![Missing key rejected](docs/screenshots/v2_live_05_missing_key.png)
 
 ## What changed from V1 to V2 and why
 

@@ -168,3 +168,17 @@ def test_restart_resets_everything():
     game.reset()
     assert strip_bookkeeping(game.state) == strip_bookkeeping(game.engine.new_state())
     assert game.turn("enter 3715 on the drawer").result.code == "no_basis"
+
+
+def test_narrator_spelling_out_a_secret_is_caught():
+    spelled = lambda msg: "A voice murmurs that the final pair of digits is eighty-six."
+    game = EscapeRoomGame(FakeLLM(narrator_reply=spelled))
+    out = game.turn("examine the desk")
+    assert out.narration_source == "template (guard)" and "eighty" not in out.narration.lower()
+
+
+def test_narrator_may_reuse_numbers_that_are_in_the_facts():
+    ok = "Four red books jut out from the shelf, their covers curling with age."
+    game = EscapeRoomGame(FakeLLM(narrator_reply=ok))
+    out = game.turn("examine the bookshelf")  # facts mention "Four red books"
+    assert out.narration_source == "llm"

@@ -32,8 +32,17 @@ Hard rules:
 _MAX_NARRATION_CHARS = 900
 
 
+# Spelled-out numbers are checked too, otherwise "eighty-six" would slip past a digits-only guard.
+# ("one" is excluded: it is far too common as an ordinary pronoun.)
+_NUMBER_WORDS = (
+    "zero|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|"
+    "seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand"
+)
+_NUMBER_TOKEN = re.compile(rf"\d+|\b(?:{_NUMBER_WORDS})\b", re.IGNORECASE)
+
+
 def _numbers(text: str) -> set[str]:
-    return set(re.findall(r"\d+", text))
+    return {t.lower() for t in _NUMBER_TOKEN.findall(text)}
 
 
 def check_narration(narration: str, facts: list[str]) -> str | None:

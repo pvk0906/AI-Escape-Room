@@ -87,6 +87,10 @@ re-sent every turn. Simple, engaging, and fragile by design. See [docs/architect
 
 ![Version 1 architecture](docs/img/architecture_v1.png)
 
+Version 1 running live with Gemini. It reveals the bookshelf digits in one step. With this model it happened to refuse the missing key and the "administrator" claim; with a smaller model the same missing-key attack leaked a code (see [docs/test_results.md](docs/test_results.md)):
+
+![Version 1 live session](docs/screenshots/v1_live_01.jpeg)
+
 **Problems this design has** (by construction, and what Version 2 is built to fix):
 
 * the model can contradict earlier turns or "forget" what the player collected;

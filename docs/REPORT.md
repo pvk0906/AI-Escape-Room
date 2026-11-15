@@ -1,6 +1,6 @@
 # AI-Powered Escape Room — Short Report
 
-**Course mini project 1** · Repository: `AI-Escape-Room` · Author: *\<your name\>*
+**Course mini project 1** · Repository: `AI-Escape-Room` · Author: Pranav Vamsi Krishna Chitirala
 
 ## 1. Goal
 

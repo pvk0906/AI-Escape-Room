@@ -1,0 +1,124 @@
+{
+  "title": "The Locked Library",
+  "intro": "You wake up on a cold stone floor, head pounding. You are locked inside an old library. Dust hangs in the lamplight. You can make out a desk, a bookshelf, a painting, a small locked drawer and a heavy door with a four-digit keypad. Look closely at everything, collect useful items, solve the puzzles and find the code that opens the door.",
+
+  "objects": {
+    "desk": {
+      "name": "desk",
+      "aliases": ["writing desk", "oak desk", "inkwell"],
+      "descriptions": [
+        {"if_flag": "took_old_letter", "text": "A heavy oak desk, bare now except for a dried inkwell."},
+        {"text": "A heavy oak desk covered in dust and ink stains. Under a dried inkwell lies an old letter."}
+      ],
+      "on_examine": {"reveal_items": ["old_letter"]}
+    },
+    "bookshelf": {
+      "name": "bookshelf",
+      "aliases": ["shelf", "shelves", "bookcase"],
+      "descriptions": [
+        {"text": "Rows of dusty books line the shelves. Four red books on the middle shelf stick out at different depths from all the others."}
+      ],
+      "on_examine": {"set_flags": ["books_noticed"]}
+    },
+    "red_books": {
+      "name": "four red books",
+      "aliases": ["red books", "four books", "those books", "the books", "books", "red book"],
+      "requires_flags": ["books_noticed"],
+      "descriptions": [
+        {"text": "Inside the front cover of each red book is a handwritten digit. From left to right they read: 3, 7, 1 and 5."}
+      ],
+      "on_examine": {"reveal_clues": ["drawer_digits"]}
+    },
+    "painting": {
+      "name": "painting",
+      "aliases": ["picture", "frame", "lighthouse", "plaque"],
+      "descriptions": [
+        {"if_flag": "panel_open", "text": "The storm-tossed lighthouse painting. The hidden panel in its frame now stands open and empty."},
+        {"text": "A storm-tossed lighthouse in oil paint. A brass plaque reads: Plate 42. In the lower edge of the frame there is a tiny keyhole."}
+      ],
+      "on_examine": {"set_flags": ["painting_examined"], "reveal_clues": ["door_first_half"]}
+    },
+    "drawer": {
+      "name": "drawer",
+      "aliases": ["locked drawer", "small drawer", "dial lock"],
+      "descriptions": [
+        {"if_flag": "took_silver_key", "text": "The drawer hangs open. It is empty now."},
+        {"if_flag": "drawer_unlocked", "text": "The drawer is open. A small silver key lies inside."},
+        {"text": "A small drawer set into the desk, secured by a four-digit dial lock."}
+      ]
+    },
+    "door": {
+      "name": "door",
+      "aliases": ["exit", "keypad", "heavy door", "oak door", "way out"],
+      "descriptions": [
+        {"text": "A heavy oak door with a four-digit keypad. The display blinks LOCKED."}
+      ]
+    }
+  },
+
+  "items": {
+    "old_letter": {
+      "name": "old letter",
+      "aliases": ["letter", "note", "paper"],
+      "description": "The faded ink reads: 'The books remember what I forgot. When you find the key, remember the painting watches over what is hidden. The way out is the plate first, then what the frame hides.'"
+    },
+    "silver_key": {
+      "name": "silver key",
+      "aliases": ["key", "small key", "small silver key"],
+      "description": "A small, ornate silver key, cold to the touch."
+    }
+  },
+
+  "clues": {
+    "drawer_digits": {"text": "The four red books carry the digits 3, 7, 1 and 5, left to right."},
+    "door_first_half": {"text": "The painting's plaque reads Plate 42."},
+    "door_second_half": {"text": "A slip of paper hidden behind the painting's frame bears the number 86."}
+  },
+
+  "locks": {
+    "drawer": {
+      "code": "3715",
+      "requires_clues": ["drawer_digits"],
+      "unlock_flag": "drawer_unlocked",
+      "puzzle": "drawer",
+      "reveal_items": ["silver_key"],
+      "success_text": "The dial clicks into place and the drawer slides open. A small silver key lies inside.",
+      "wrong_text": "The dial lock rattles but the drawer stays shut. That is not the right code.",
+      "already_text": "The drawer is already unlocked."
+    },
+    "door": {
+      "code": "4286",
+      "requires_clues": ["door_first_half", "door_second_half"],
+      "unlock_flag": "door_unlocked",
+      "puzzle": "door",
+      "escape": true,
+      "success_text": "The keypad chirps, the bolts retract and the heavy door swings open. Cool night air rushes in. You have escaped the library!",
+      "wrong_text": "The keypad gives an angry buzz and the display flashes ERROR. That is not the right code.",
+      "already_text": "The door is already unlocked."
+    }
+  },
+
+  "uses": [
+    {
+      "item": "silver_key",
+      "target": "painting",
+      "requires_flags": ["painting_examined"],
+      "missing_text": "You have not found anywhere to use the key on the painting yet.",
+      "set_flags": ["panel_open"],
+      "reveal_clues": ["door_second_half"],
+      "puzzle": "panel",
+      "text": "The silver key fits the tiny keyhole in the frame and turns with a click. A hidden panel swings open, revealing a slip of paper bearing the number 86.",
+      "already_text": "The hidden panel in the frame is already open."
+    }
+  ],
+
+  "required_puzzles": ["drawer", "panel", "door"],
+
+  "hints": [
+    {"unless_flag": "books_noticed", "text": "Some objects look more interesting than others. Try examining the bookshelf."},
+    {"unless_flag": "drawer_unlocked", "text": "Look closely at the books that are out of place. The locked drawer wants four digits."},
+    {"unless_flag": "painting_examined", "text": "The painting is worth a careful look."},
+    {"unless_flag": "panel_open", "text": "The drawer holds something that might fit a small keyhole."},
+    {"unless_flag": "door_unlocked", "text": "The door's code is built from what the painting shows and what its frame hides."}
+  ]
+}

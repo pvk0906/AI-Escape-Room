@@ -120,7 +120,10 @@ class RuleIntentParser:
             return Action("use", item=items[0][1] if items else None, raw_item=noun)
 
         # --- take ----------------------------------------------------------------
-        m = re.match(r"^(?:i )?(?:(?:want to|will|would like to|try to|am going to|'ll)\s+)?(take|grab|pick up|pick|collect|pocket|get|fetch|steal|snatch)\b(.*)$", text)
+        # "get" only counts as a take verb at the start ("get the letter"), not in "I get it".
+        text = re.sub(r"^(i )?((want to|will|would like to|try to|'ll) )?get\b", r"\1\2take", text)
+        # search (not match) so a take verb later in the message is found: "Great, it opened. I take the key."
+        m = re.search(r"\b(take|grab|pick up|pick|collect|pocket|fetch|steal|snatch)\b(.*)$", text)
         if m:
             # Only look at the noun phrase BEFORE "from/off/out of ..." so that
             # "grab the crowbar from the desk" is about the crowbar, not the desk.

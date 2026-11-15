@@ -27,6 +27,8 @@ def rules(cfg):
         ("read the letter", "examine", "old_letter"),
         ("what does the plaque say", "examine", "painting"),
         ("pick up the letter", "take", "old_letter"),
+        ("get the letter", "take", "old_letter"),
+        ("Great, it opened. I take the silver key out of it.", "take", "silver_key"),
         ("grab the key", "take", "silver_key"),
         ("open the door", "open", "door"),
         ("what's in my inventory?", "inventory", None),

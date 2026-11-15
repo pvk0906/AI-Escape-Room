@@ -30,7 +30,7 @@ Version 2 fixes those weaknesses by moving the rules out of the model.
 Requires Python 3.10+.
 
 ```bash
-git clone https://github.com/<your-username>/AI-Escape-Room.git
+git clone https://github.com/pvk0906/AI-Escape-Room.git
 cd AI-Escape-Room
 python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt

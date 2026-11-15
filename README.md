@@ -46,7 +46,7 @@ streamlit run v2/app.py     # Version 2
 Set `LLM_PROVIDER` in `.env`:
 
 * `gemini` — Google Gemini API. Create a key in [Google AI Studio](https://aistudio.google.com/app/apikey) and set
-  `GEMINI_API_KEY`. `GEMINI_MODEL` defaults to the `gemini-3.8-flash` alias; if you get a "model not found" error,
+  `GEMINI_API_KEY`. `GEMINI_MODEL` defaults to the `gemini-3.5-flash` alias; if you get a "model not found" error,
   put a current model name there.
 * `openai` — any OpenAI-compatible endpoint: a local [Ollama](https://ollama.com) server (no key, no cost), Groq,
   OpenRouter, …  Set `OPENAI_BASE_URL`, `OPENAI_MODEL` and (if needed) `OPENAI_API_KEY`.

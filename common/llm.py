@@ -43,8 +43,8 @@ class LLMClient:
         model: str | None = None,
         api_key: str | None = None,
         base_url: str | None = None,
-        timeout: float = 30.0,
-        max_retries: int = 3,
+        timeout: float = 20.0,
+        max_retries: int = 2,
     ) -> None:
         self.provider = (provider or "none").lower()
         self.model = model
@@ -120,7 +120,12 @@ class LLMClient:
         from google.genai import types
 
         if self._gemini_client is None:
-            self._gemini_client = genai.Client(api_key=self.api_key)
+            # HttpOptions.timeout is in milliseconds. Without it a stuck request
+            # blocks forever and V2's fallbacks never get a chance to run.
+            self._gemini_client = genai.Client(
+                api_key=self.api_key,
+                http_options=types.HttpOptions(timeout=int(self.timeout * 1000)),
+            )
 
         contents = [
             types.Content(
@@ -129,10 +134,13 @@ class LLMClient:
             )
             for m in messages
         ]
+        # Newer Gemini models "think" first and thinking tokens count against
+        # max_output_tokens, so a tight cap can leave no room for the answer.
+        cap = max(max_tokens, 2048) if max_tokens else None
         config = types.GenerateContentConfig(
             system_instruction=system,
             temperature=temperature,
-            max_output_tokens=max_tokens,
+            max_output_tokens=cap,
             response_mime_type="application/json" if json_mode else None,
         )
         response = self._gemini_client.models.generate_content(
@@ -140,7 +148,12 @@ class LLMClient:
         )
         text = response.text
         if not text:
-            raise LLMError("Gemini returned an empty response (possibly blocked by safety filters).")
+            reason = None
+            try:
+                reason = response.candidates[0].finish_reason
+            except Exception:  # noqa: BLE001
+                pass
+            raise LLMError(f"Gemini returned an empty response (finish_reason={reason}).")
         return text.strip()
 
     def _openai_compatible(self, system, messages, temperature, json_mode, max_tokens) -> str:
